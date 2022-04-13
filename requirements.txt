@@ -1,0 +1,4 @@
+requests==2.27.1
+requests-pkcs12==1.13
+qrcode[pil]]==7.3.1
+pytz==2022.1
