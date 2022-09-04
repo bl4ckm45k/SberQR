@@ -24,7 +24,7 @@ class CancelType(Enum):
     REVERSE = 'REVERSE'
 
 
-class SberQR(object):
+class SyncSberQR(object):
     member_id: str
     id_qr: str
     tid: str
@@ -217,7 +217,7 @@ class SberQR(object):
 
     def registry(self, start_period: datetime, end_period: datetime):
         """
-        Отмена/возврат
+        Запрос реестра операций
         """
         url = 'https://api.sberbank.ru:8443/prod/qr/order/v3/registry'
         rq_uid = ''.join(choices(hexdigits, k=32))
