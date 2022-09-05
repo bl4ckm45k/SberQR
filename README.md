@@ -29,7 +29,8 @@ print(data)
 import asyncio
 from SberQR import AsyncSberQR
 
-sber_qr = AsyncSberQR(member_id, id_qr, tid, client_id, client_secret, pkcs12_filename, pkcs12_password)
+sber_qr = AsyncSberQR(member_id, id_qr, tid, client_id, client_secret,
+                      path_crt_from_pkcs12, path_key_from_pkcs12, pkcs12_password)
 positions = [{"position_name": 'Товар ра 10 рублей',
               "position_count": 1,
               "position_sum": 1000,
