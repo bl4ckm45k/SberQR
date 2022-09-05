@@ -2,7 +2,6 @@ import asyncio
 import base64
 import ssl
 from datetime import datetime
-from enum import Enum
 from logging import getLogger
 from random import choices
 from string import hexdigits
@@ -13,27 +12,10 @@ import ujson as json
 
 from .api import make_request, Methods
 from .payload import generate_payload
+from .scope import Scope
+from .types import RegistryType, CancelType
 
 logger = getLogger(__name__)
-
-
-# setattr(asyncio.sslproto._SSLProtocolTransport, "_start_tls_compatible", True)
-class Scope(Enum):
-    create = 'https://api.sberbank.ru/qr/order.create'
-    status = 'https://api.sberbank.ru/qr/order.status'
-    revoke = 'https://api.sberbank.ru/qr/order.revoke'
-    cancel = 'https://api.sberbank.ru/qr/order.cancel'
-    registry = 'auth://qr/order.registry'
-
-
-class CancelType(Enum):
-    REFUND = 'REFUND'
-    REVERSE = 'REVERSE'
-
-
-class RegistryType(Enum):
-    REGISTRY = 'REGISTRY'
-    QUANTITY = 'QUANTITY'
 
 
 class AsyncSberQR:
@@ -184,14 +166,14 @@ class AsyncSberQR:
         """
         Запрос реестра операций
         """
-        rqUid = ''.join(choices(hexdigits, k=32))
+        rq_uid = ''.join(choices(hexdigits, k=32))
         access_token = await self.token(Scope.registry)
-        headers = {'Authorization': f'Bearer {access_token["access_token"]}', 'RqUID': rqUid}
-        rqTm = f'{datetime.utcnow().isoformat(timespec="seconds")}Z'
-        idQR = self._id_qr
-        startPeriod = f'{start_period.isoformat(timespec="seconds")}Z'
-        endPeriod = f'{end_period.isoformat(timespec="seconds")}Z'
-        registryType = registry_type.value
-        payload = generate_payload(exclude=['headers', 'access_token', 'start_period', 'end_period', 'registry_type'],
-                                   **locals())
+        headers = {'Authorization': f'Bearer {access_token["access_token"]}', 'RqUID': rq_uid}
+        payload = {"rqUid": rq_uid,
+                   "rqTm": f'{datetime.utcnow().isoformat(timespec="seconds")}Z',
+                   "idQR": self._id_qr,
+                   "startPeriod": f'{start_period.isoformat(timespec="seconds")}Z',
+                   "endPeriod": f'{end_period.isoformat(timespec="seconds")}Z',
+                   "registryType": registry_type.value}
+
         return await self.request(Methods.registry, headers, payload)
