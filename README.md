@@ -12,16 +12,34 @@
 from SberQR import SyncSberQR
 
 sber_qr = SyncSberQR(member_id, id_qr, tid, client_id, client_secret, pkcs12_filename, pkcs12_password)
-data = sber_qr.creation('Кофе', operation_sum=110, is_sbp=False)
+positions = [{"position_name": 'Товар ра 10 рублей',
+              "position_count": 1,
+              "position_sum": 1000,
+              "position_description": 'Какой-то товар за 10 рублей'}
+             ]
+data = sber_qr.creation(description=f'Оплата заказа 3', order_sum=1000, order_number="3", positions=positions)
+print(data)
 ```
 
+> Если при инициализации классов `AsyncSberQR` и `SyncSberQR` переданы одинаковые `tid` и `id_qr`, то будет создан
+> платеж через СБП, иначе через ПлатиQR.
 ## Пример (async)
 
 ```python
+import asyncio
 from SberQR import AsyncSberQR
 
 sber_qr = AsyncSberQR(member_id, id_qr, tid, client_id, client_secret, pkcs12_filename, pkcs12_password)
-data = await sber_qr.creation('Кофе', operation_sum=110, is_sbp=False)
+positions = [{"position_name": 'Товар ра 10 рублей',
+              "position_count": 1,
+              "position_sum": 1000,
+              "position_description": 'Какой-то товар за 10 рублей'}
+             ]
+async def creation_qr():
+    data = await sber_qr.creation(description=f'Оплата заказа 3', order_sum=1000, order_number="3", positions=positions)
+    print(data)
+if __name__ == '__main__':
+    asyncio.run(creation_qr())
 ```
 
 Для работы потребуется получить от банка следующие параметры
@@ -34,10 +52,11 @@ client_secret = '3a0ea8cb-886c-4efa-ac45-e3d36aaba335'  # получить на 
 pkcs12_filename = 'key/key.p12'  # Файл сертификат. Получается на api.developer.sber.ru
 pkcs12_password = 'SomeSecret'  # Пароль от файла сертификат. Получается на api.developer.sber.ru
 ```
+
 ## Отличия асинхронной версии от синхронной
->В асинхронной версии функция `creation` не требует передачи аргумента `is_sbp`, если `tid` и `id_qr` совпадают - будет создан платеж через СБП, иначе через ПлатиQR
----
->В Отличии от синхронной версии, асинхронная требуется распаковать сертификат самостоятельно.
+>В Отличии от синхронной версии, асинхронная требуется распаковать сертификат самостоятельно с помощью openssl.
+
+[Инструкция от ssl.com](https://www.ssl.com/ru/how-to/export-certificates-private-key-from-pkcs12-file-with-openssl/ "SSL.com") - для Windows обратите внимание на Cygwin в инструкции
 
 ```
 Откройте командную строку, перейдите в папку, где лежит архив сертификата с расширением .p12. Выполните команду:
