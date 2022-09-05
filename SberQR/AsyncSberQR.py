@@ -194,5 +194,4 @@ class AsyncSberQR:
         registryType = registry_type.value
         payload = generate_payload(exclude=['headers', 'access_token', 'start_period', 'end_period', 'registry_type'],
                                    **locals())
-        print(f'\nregistry PAYLOAD: \n\n {payload}')
         return await self.request(Methods.registry, headers, payload)
