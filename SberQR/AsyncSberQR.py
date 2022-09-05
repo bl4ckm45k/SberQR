@@ -71,8 +71,8 @@ class AsyncSberQR:
 
         self._currency = "643"
         ssl_context = ssl.create_default_context()
-        ssl_context.load_cert_chain(certfile='C://Users//User//PycharmProjects//sber-qr//autozona_cert.crt',
-                                    keyfile='C://Users//User//PycharmProjects//sber-qr//autozona_private.key',
+        ssl_context.load_cert_chain(certfile=crt_file_path,
+                                    keyfile=key_file_path,
                                     password=pkcs12_password)
         self._session: Optional[aiohttp.ClientSession] = None
         self._connector_class: Type[aiohttp.TCPConnector] = aiohttp.TCPConnector
