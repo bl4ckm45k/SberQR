@@ -156,7 +156,7 @@ class AsyncSberQR:
         headers = {'Authorization': f'Bearer {access_token["access_token"]}', 'RqUID': rq_uid}
 
         rq_tm = f'{datetime.utcnow().isoformat(timespec="seconds")}Z'
-        id_qr, tid, operation_currency = self._id_qr, self._currency, self._tid
+        id_qr, tid, operation_currency = self._id_qr, self._tid, self._currency
         operation_type = operation_type.value
         payload = generate_payload(exclude=['headers', 'access_token'], **locals())
         return await self.request(Methods.cancel, headers, payload)
