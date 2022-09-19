@@ -15,7 +15,7 @@ from SberQR import AsyncSberQR
 # Если требуется передайте аргумент redis=
 # redis = aioredis.from_url("redis://localhost", decode_responses=True)
 # redis = "redis://localhost"
-# Redis используется только для временного хранения токена,
+# Redis используется только для временного хранения токена
 sber_qr = AsyncSberQR(member_id, id_qr, tid, client_id, client_secret,
                       path_crt_from_pkcs12, path_key_from_pkcs12, pkcs12_password)
 positions = [{"position_name": 'Товар ра 10 рублей',
