@@ -50,15 +50,15 @@ async def check_paid(order_id, order_number):
         print('Заказ не оплачен, отменяем')
         await revoke_payment(order_id)
     else:
-        await sber_qr.cancel(order_id,
-                             operation_id=data_status[0]['operation_id'],
-                             cancel_operation_sum=data_status[0]['operation_sum'],
-                             auth_code=data_status[0]['auth_code'],
-                             operation_type=CancelType.REVERSE,
-                             sbp_payer_id=None)  # sbp_payer_id номер телефона клиента в формате +79998887766, если возврат по СБП
+        cancel_result = await sber_qr.cancel(order_id,
+                                             operation_id=data_status[0]['operation_id'],
+                                             cancel_operation_sum=data_status[0]['operation_sum'],
+                                             auth_code=data_status[0]['auth_code'],
+                                             operation_type=CancelType.REVERSE,
+                                             sbp_payer_id=None)  # sbp_payer_id номер телефона клиента в формате +79998887766, если возврат по СБП
         # CancelType.REVERSE - Если прошло менее 24 часов с оплаты
         # CancelType.REFUND - Если прошло более 24 часов с оплаты
-
+        logger.info(f'{cancel_result}')
 
 async def revoke_payment(order_id):
     data_revoke = await sber_qr.revoke(order_id)
