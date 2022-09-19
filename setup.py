@@ -10,12 +10,12 @@ requirements = ["aiohttp>=3.8.1", "certifi>=2022.6.15", "ujson>=5.3.0", "pytz==2
 
 setup(
     name='SberQR',
-    version='1.0.0b1',
+    version='1.0.1b1',
     author='bl4ckm45k',
     author_email='nonpowa@gmail.com',
-    description='Библиотека для работы со Сбер Банк QR.',
+    description='Асинхронная библиотека для работы с SberPay QR/Плати QR.',
     long_description_content_type="text/markdown",
-    url="https://github.com/Doncode/sber-qr",
+    url="https://github.com/bl4ckm45k/SberQR",
     license="MIT",
     packages=['SberQR'],
     install_requires=requirements,
@@ -24,7 +24,6 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
-        'Development Status :: 4 - Beta'
         'Framework :: AsyncIO',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

@@ -1,4 +1,11 @@
-# Плати QR Сбербанк и СБП
+![](https://img.shields.io/github/stars/bl4ckm45k/SberQR.svg)
+![](https://img.shields.io/github/forks/bl4ckm45k/SberQR.svg)
+![](https://img.shields.io/github/issues/bl4ckm45k/SberQR.svg)
+[![Supported python versions](https://img.shields.io/pypi/pyversions/SberQR.svg)](https://pypi.python.org/pypi/SberQR)
+[![Downloads](https://img.shields.io/pypi/dm/SberQR.svg?)](https://pypi.python.org/pypi/SberQR)
+[![PyPi Package Version](https://img.shields.io/pypi/v/SberQR)](https://pypi.python.org/pypi/SberQR)
+
+# Асинхронная библиотека для работы с SberPay QR/Плати QR.
 
 Асинхронная библиотека для работы с SberPay QR/Плати QR.
 

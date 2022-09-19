@@ -1,5 +1,5 @@
 qrcode[pil]==7.3.1
 aiohttp~=3.8.1
 ujson~=5.4.0
-setuptools==65.3.0
+setuptools>=65.3.0
 aioredis>=2.0.1
