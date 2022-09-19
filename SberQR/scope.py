@@ -7,3 +7,4 @@ class Scope(Enum):
     revoke = 'https://api.sberbank.ru/qr/order.revoke'
     cancel = 'https://api.sberbank.ru/qr/order.cancel'
     registry = 'auth://qr/order.registry'
+    notify = 'auth://qr/order.notify'
