@@ -13,7 +13,9 @@
 
 Позволяет создавать динамический QR и проверять статус платежа.
 
-> Обязательно 
+> Обязательно передавайте параметр russian_crt, без него не удастся установить SSL соединение с API Сбера
+> 
+> [PEM Сертификат securepayments.sberbank.ru](https://securepayments.sberbank.ru/wiki/doku.php/certificates:add:backend)
 
 > Если при инициализации класса `AsyncSberQR` переданы одинаковые `tid` и `id_qr`, то будет создан
 > платеж через СБП, иначе через ПлатиQR.
