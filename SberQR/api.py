@@ -42,7 +42,7 @@ def check_result(method_name: str, content_type: str, status_code: int, body):
 
 
 async def make_request(session, method, headers, data, **kwargs):
-    url = f'https://api.sberbank.ru:8443/prod/{method}'
+    url = f'https://mc.api.sberbank.ru/prod/{method}'
 
     if method != Methods.oauth:
         async with session.post(url, json=data, headers=headers) as response:

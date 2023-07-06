@@ -9,6 +9,7 @@ from typing import Optional, Type, Union, List, Dict
 
 import aiohttp
 import aioredis
+import certifi
 import ujson as json
 from aioredis.client import Redis
 
@@ -26,6 +27,7 @@ class AsyncSberQR:
                  client_id: str, client_secret: str,
                  crt_file_path: str, key_file_path: str,
                  pkcs12_password: str,
+                 russian_crt: str,
                  redis: Union[str, Redis] = None,
                  loop: Optional[Union[asyncio.BaseEventLoop, asyncio.AbstractEventLoop]] = None,
                  connections_limit: int = None,
@@ -41,7 +43,7 @@ class AsyncSberQR:
         :param crt_file_path:
         :param key_file_path:
         :param pkcs12_password:
-        :param redis_url:
+        :param redis:
         :param loop:
         :param connections_limit:
         :param timeout:
@@ -57,10 +59,13 @@ class AsyncSberQR:
         self._client_secret = client_secret
 
         self._currency = "643"
-        ssl_context = ssl.create_default_context()
+        ssl_context = ssl.create_default_context(cafile=certifi.where())
+
         ssl_context.load_cert_chain(certfile=crt_file_path,
                                     keyfile=key_file_path,
                                     password=pkcs12_password)
+        ssl_context.load_verify_locations(cafile=russian_crt)
+
         self._session: Optional[aiohttp.ClientSession] = None
         self._connector_class: Type[aiohttp.TCPConnector] = aiohttp.TCPConnector
         self._connector_init = dict(limit=connections_limit, ssl=ssl_context)
@@ -122,7 +127,7 @@ class AsyncSberQR:
             data = {'grant_type': 'client_credentials', 'scope': scope.value}
             token_data = await self.request(Methods.oauth, headers, data)
             await self._redis.set(f'{self._client_id}token_{scope.value}', token_data['access_token'],
-                                  int(token_data['expires_in']) - 4)
+                                  int(token_data['expires_in']) - 10)
             return token_data['access_token']
 
     async def creation(self, description: str, order_sum: int, order_number: str, positions: Union[List, Dict]):

@@ -5,26 +5,45 @@
 [![Downloads](https://img.shields.io/pypi/dm/SberQR.svg?)](https://pypi.python.org/pypi/SberQR)
 [![PyPi Package Version](https://img.shields.io/pypi/v/SberQR)](https://pypi.python.org/pypi/SberQR)
 
-# Асинхронная библиотека для работы с SberPay QR/Плати QR.
+
+
+## Асинхронная библиотека для работы с SberPay QR/Плати QR.
 
 Асинхронная библиотека для работы с SberPay QR/Плати QR.
 
 Позволяет создавать динамический QR и проверять статус платежа.
+
+> Обязательно 
 
 > Если при инициализации класса `AsyncSberQR` переданы одинаковые `tid` и `id_qr`, то будет создан
 > платеж через СБП, иначе через ПлатиQR.
 ## Пример (async)
 
 ```python
+import os
 import asyncio
 from SberQR import AsyncSberQR
 
+member_id = '00000105'  # выдается через почту support@ecom.sberbank.ru
+tid = '24601234'  # ID  терминала/Точки. Получить в ЛК Сбрербанк бизнес на странице Информация о точке
+id_qr = '1000301234'  # Номер наклейки с QR-кодом. Получить в ЛК Сбрербанк бизнес Информация о точке/список оборудования
+client_id = '6e7254e2-6de8-4074-b458-b7238689772b'  # получить на api.developer.sber.ru
+client_secret = '3a0ea8cb-886c-4efa-ac45-e3d36aaba335'  # получить на api.developer.sber.ru
+
+#
+crt_from_pkcs12 = f'{os.getcwd()}/cert.crt'  # Для асинхронной версии требуется распаковать сертификат
+key_from_pkcs12 = f'{os.getcwd()}/private.key'  # Для асинхронной версии требуется распаковать приватный ключ
+pkcs12_password = 'SomeSecret'  # Пароль от файла сертификат. Получается на api.developer.sber.ru
+russian_crt = f'{os.getcwd()}/Cert_CA.pem'  # Сертификат мин.цифры для установления SSL соединения
 # Если требуется передайте аргумент redis=
 # redis = aioredis.from_url("redis://localhost", decode_responses=True)
 # redis = "redis://localhost"
 # Redis используется только для временного хранения токена
-sber_qr = AsyncSberQR(member_id, id_qr, tid, client_id, client_secret,
-                      path_crt_from_pkcs12, path_key_from_pkcs12, pkcs12_password)
+sber_qr = AsyncSberQR(member_id=member_id, id_qr=tid, tid=tid,
+                      client_id=client_id, client_secret=client_secret,
+                      crt_file_path=crt_from_pkcs12, key_file_path=key_from_pkcs12,
+                      pkcs12_password=pkcs12_password,
+                      russian_crt=russian_crt)
 positions = [{"position_name": 'Товар ра 10 рублей',
               "position_count": 1,
               "position_sum": 1000,

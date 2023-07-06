@@ -1,5 +1,7 @@
-qrcode[pil]==7.3.1
-aiohttp~=3.8.1
-ujson~=5.4.0
+qrcode[pil]==7.4.2
+aiohttp~=3.8.4
+ujson>=5.8.0
 setuptools>=65.3.0
 aioredis>=2.0.1
+SberQR~=1.0.1b1
+certifi==2023.5.7

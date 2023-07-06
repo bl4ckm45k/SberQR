@@ -23,10 +23,15 @@ client_secret = '3a0ea8cb-886c-4efa-ac45-e3d36aaba335'  # получить на 
 crt_from_pkcs12 = f'{os.getcwd()}/cert.crt'  # Для асинхронной версии требуется распаковать сертификат
 key_from_pkcs12 = f'{os.getcwd()}/private.key'  # Для асинхронной версии требуется распаковать приватный ключ
 pkcs12_password = 'SomeSecret'  # Пароль от файла сертификат. Получается на api.developer.sber.ru
+russian_crt = f'{os.getcwd()}/Cert_CA.pem'  # Сертификат мин.цифры для установления SSL соединения
 
 # Без использования Redis
-sber_qr = AsyncSberQR(member_id, id_qr=tid, tid=tid, client_id=client_id, client_secret=client_secret,
-                      crt_file_path=crt_from_pkcs12, key_file_path=key_from_pkcs12, pkcs12_password=pkcs12_password)
+sber_qr = AsyncSberQR(member_id,
+                      id_qr=tid, tid=tid,
+                      client_id=client_id, client_secret=client_secret,
+                      crt_file_path=crt_from_pkcs12, key_file_path=key_from_pkcs12,
+                      pkcs12_password=pkcs12_password,
+                      russian_crt=russian_crt)
 
 
 # Если требуется передайте аргумент redis= (str or Redis obj)
