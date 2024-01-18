@@ -5,6 +5,7 @@ if sys.version_info < (3, 7):
                        'Python 3.7+'.format('.'.join(map(str, sys.version_info[:3]))))
 
 from .AsyncSberQR import AsyncSberQR
+from .SberQr import SberQR
 from .api import make_request, Methods
 from .exceptions import (NetworkError, SberQrAPIError)
 
