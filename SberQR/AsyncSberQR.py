@@ -8,10 +8,10 @@ from string import hexdigits
 from typing import Optional, Type, Union, List, Dict
 
 import aiohttp
-import aioredis
+from redis import asyncio as aioredis
 import certifi
 import ujson as json
-from aioredis.client import Redis
+from redis.asyncio.client import Redis
 
 from .api import make_request, Methods
 from .payload import generate_payload
@@ -126,8 +126,9 @@ class AsyncSberQR:
                        'rquid': ''.join(choices(hexdigits, k=32))}
             data = {'grant_type': 'client_credentials', 'scope': scope.value}
             token_data = await self.request(Methods.oauth, headers, data)
-            await self._redis.set(f'{self._client_id}token_{scope.value}', token_data['access_token'],
-                                  int(token_data['expires_in']) - 10)
+            if self._redis:
+                await self._redis.set(f'{self._client_id}token_{scope.value}', token_data['access_token'],
+                                      int(token_data['expires_in']) - 10)
             return token_data['access_token']
 
     async def creation(self, description: str, order_sum: int, order_number: str, positions: Union[List, Dict]):
