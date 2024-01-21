@@ -7,9 +7,9 @@
 
 
 
-## Асинхронная библиотека для работы с SberPay QR/Плати QR.
+## Асинхронная и синхронная библиотека для работы с SberPay QR/Плати QR.
 
-Асинхронная библиотека для работы с SberPay QR/Плати QR.
+Асинхронная и синхронная библиотека для работы с SberPay QR/Плати QR.
 
 Позволяет создавать динамический QR и проверять статус платежа.
 
@@ -56,6 +56,45 @@ async def creation_qr():
     print(data)
 if __name__ == '__main__':
     asyncio.run(creation_qr())
+```
+
+## Пример (sync)
+
+```python
+import os
+from SberQR import SberQR
+
+member_id = '00000105'  # выдается через почту support@ecom.sberbank.ru
+tid = '24601234'  # ID  терминала/Точки. Получить в ЛК Сбрербанк бизнес на странице Информация о точке
+id_qr = '1000301234'  # Номер наклейки с QR-кодом. Получить в ЛК Сбрербанк бизнес Информация о точке/список оборудования
+client_id = '6e7254e2-6de8-4074-b458-b7238689772b'  # получить на api.developer.sber.ru
+client_secret = '3a0ea8cb-886c-4efa-ac45-e3d36aaba335'  # получить на api.developer.sber.ru
+
+#
+crt_from_pkcs12 = f'{os.getcwd()}/cert.crt'  # Для асинхронной версии требуется распаковать сертификат
+key_from_pkcs12 = f'{os.getcwd()}/private.key'  # Для асинхронной версии требуется распаковать приватный ключ
+pkcs12_password = 'SomeSecret'  # Пароль от файла сертификат. Получается на api.developer.sber.ru
+russian_crt = f'{os.getcwd()}/Cert_CA.pem'  # Сертификат мин.цифры для установления SSL соединения
+# Если требуется передайте аргумент redis=
+# redis = aioredis.from_url("redis://localhost", decode_responses=True)
+# redis = "redis://localhost"
+# Redis используется только для временного хранения токена
+sber_qr = SberQR(member_id=member_id, id_qr=tid, tid=tid,
+                      client_id=client_id, client_secret=client_secret,
+                      crt_file_path=crt_from_pkcs12, key_file_path=key_from_pkcs12,
+                      pkcs12_password=pkcs12_password,
+                      russian_crt=russian_crt)
+positions = [{"position_name": 'Товар ра 10 рублей',
+              "position_count": 1,
+              "position_sum": 1000,
+              "position_description": 'Какой-то товар за 10 рублей'}
+             ]
+def creation_qr():
+    data = sber_qr.creation(description=f'Оплата заказа 3', order_sum=1000, order_number="3", positions=positions)
+    print(data)
+    
+if __name__ == '__main__':
+    creation_qr()
 ```
 
 Для работы потребуется получить от банка следующие параметры
