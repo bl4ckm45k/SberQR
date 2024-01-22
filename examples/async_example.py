@@ -7,6 +7,7 @@ import os
 from typing import List, Dict, Union
 
 import qrcode
+from redis.asyncio import Redis
 
 # import aioredis
 from SberQR import AsyncSberQR
@@ -25,13 +26,15 @@ key_from_pkcs12 = f'{os.getcwd()}/private.key'  # Для асинхронной 
 pkcs12_password = 'SomeSecret'  # Пароль от файла сертификат. Получается на api.developer.sber.ru
 russian_crt = f'{os.getcwd()}/Cert_CA.pem'  # Сертификат мин.цифры для установления SSL соединения
 
-# Без использования Redis
+redis_cli = Redis(decode_responses=True)
+
 sber_qr = AsyncSberQR(member_id,
                       id_qr=tid, tid=tid,
                       client_id=client_id, client_secret=client_secret,
                       crt_file_path=crt_from_pkcs12, key_file_path=key_from_pkcs12,
                       pkcs12_password=pkcs12_password,
-                      russian_crt=russian_crt)
+                      russian_crt=russian_crt,
+                      redis=redis_cli)
 
 
 # Если требуется передайте аргумент redis= (str or Redis obj)
@@ -52,18 +55,20 @@ async def main_func(order_sum, order_number, positions: Union[List, Dict]):
 async def check_paid(order_id, order_number):
     data_status = await sber_qr.status(order_id, order_number)
     if data_status['order_state'] != 'PAID':
-        print('Заказ не оплачен, отменяем')
+        logger.info('Заказ не оплачен, отменяем')
         await revoke_payment(order_id)
     else:
-        cancel_result = await sber_qr.cancel(order_id,
-                                             operation_id=data_status[0]['operation_id'],
-                                             cancel_operation_sum=data_status[0]['operation_sum'],
-                                             auth_code=data_status[0]['auth_code'],
-                                             operation_type=CancelType.REVERSE,
-                                             sbp_payer_id=None)  # sbp_payer_id номер телефона клиента в формате +79998887766, если возврат по СБП
+        cancel_result = await sber_qr.cancel(
+            order_id,
+            operation_id=data_status[0]['operation_id'],
+            cancel_operation_sum=data_status[0]['operation_sum'],
+            auth_code=data_status[0]['auth_code'],
+            operation_type=CancelType.REVERSE,
+            sbp_payer_id=None)  # sbp_payer_id номер телефона клиента в формате +79998887766, если возврат по СБП
         # CancelType.REVERSE - Если прошло менее 24 часов с оплаты
         # CancelType.REFUND - Если прошло более 24 часов с оплаты
         logger.info(f'{cancel_result}')
+
 
 async def revoke_payment(order_id):
     data_revoke = await sber_qr.revoke(order_id)
@@ -72,7 +77,7 @@ async def revoke_payment(order_id):
 
 if __name__ == '__main__':
     positions = [
-        {"position_name": "Что-то а 10 рублей",
+        {"position_name": "Что-то на 10 рублей",
          "position_count": 1,
          "position_sum": 1000,
          "position_description": "Какой-то товар за 10 рублей"}]
