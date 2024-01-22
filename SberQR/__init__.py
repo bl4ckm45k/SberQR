@@ -10,5 +10,5 @@ from .api import make_request, Methods
 from .exceptions import (NetworkError, SberQrAPIError)
 
 __author__ = 'bl4ckm45k'
-__version__ = '1.0.3'
+__version__ = '2.0.0'
 __email__ = 'bl4ckm45k@gmail.com'
