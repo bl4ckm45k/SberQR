@@ -8,10 +8,9 @@ from string import hexdigits
 from typing import Optional, Type, Union, List, Dict
 
 import aiohttp
-from redis import asyncio as aioredis
 import certifi
 import ujson as json
-from redis.asyncio.client import Redis
+from redis.asyncio import Redis
 
 from .api import make_request, Methods
 from .payload import generate_payload
@@ -57,6 +56,7 @@ class AsyncSberQR:
         self._tid = tid
         self._client_id = client_id
         self._client_secret = client_secret
+        self._redis = None
 
         self._currency = "643"
         ssl_context = ssl.create_default_context(cafile=certifi.where())
@@ -71,8 +71,8 @@ class AsyncSberQR:
         self._connector_init = dict(limit=connections_limit, ssl=ssl_context)
         if isinstance(redis, Redis):
             self._redis = redis
-        else:
-            self._redis = aioredis.from_url(redis, decode_responses=True) if redis is not None else None
+        elif isinstance(redis, str):
+            self._redis = Redis(host=redis, decode_responses=True)
 
         self.timeout = timeout
 
@@ -116,8 +116,8 @@ class AsyncSberQR:
         return await self._redis.get(f'{self._client_id}token_{scope.value}')
 
     async def token(self, scope: Scope):
-        redis_token = await self.get_token_from_redis(scope) if self._redis is not None else None
-        if redis_token is not None:
+        redis_token = await self.get_token_from_redis(scope) if self._redis else None
+        if redis_token:
             return redis_token
         else:
             auth = base64.b64encode(f'{self._client_id}:{self._client_secret}'.encode('utf-8')).decode('utf-8')

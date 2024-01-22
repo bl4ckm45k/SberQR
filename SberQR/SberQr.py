@@ -1,19 +1,15 @@
 import asyncio
 import base64
-import ssl
 from datetime import datetime
 from logging import getLogger
 from random import choices
 from string import hexdigits
-from typing import Optional, Type, Union, List, Dict
+from typing import Optional, Union, List, Dict
 
 import requests
+from redis.client import Redis
 from requests.adapters import HTTPAdapter
 from urllib3.util.ssl_ import create_urllib3_context
-
-import certifi
-import ujson as json
-from redis.client import Redis
 
 from .api_sync import make_request, Methods
 from .payload import generate_payload
@@ -59,6 +55,7 @@ class SberQR:
         self._client_secret = client_secret
 
         self._currency = "643"
+        self._redis = None
 
         class SSLAdapter(HTTPAdapter):
             def init_poolmanager(self, *args, **kwargs):
@@ -72,8 +69,8 @@ class SberQR:
         self._https_class = SSLAdapter()
         if isinstance(redis, Redis):
             self._redis = redis
-        else:
-            self._redis = Redis.from_url(redis, decode_responses=True) if redis is not None else None
+        elif isinstance(redis, str):
+            self._redis = Redis(redis, decode_responses=True)
 
         self.timeout = timeout
 
@@ -112,7 +109,7 @@ class SberQR:
         return self._redis.get(f'{self._client_id}token_{scope.value}')
 
     def token(self, scope: Scope):
-        redis_token = self.get_token_from_redis(scope) if self._redis is not None else None
+        redis_token = self.get_token_from_redis(scope) if self._redis else None
         if redis_token is not None:
             return redis_token
         else:
@@ -124,7 +121,7 @@ class SberQR:
             token_data = self.request(Methods.oauth, headers, data)
             if self._redis:
                 self._redis.set(f'{self._client_id}token_{scope.value}', token_data['access_token'],
-                                      int(token_data['expires_in']) - 10)
+                                int(token_data['expires_in']) - 10)
             return token_data['access_token']
 
     def creation(self, description: str, order_sum: int, order_number: str, positions: Union[List, Dict]):
@@ -181,7 +178,7 @@ class SberQR:
         return self.request(Methods.cancel, headers, payload)
 
     def registry(self, start_period: datetime, end_period: datetime,
-                       registry_type: RegistryType = RegistryType.REGISTRY):
+                 registry_type: RegistryType = RegistryType.REGISTRY):
         """
         Запрос реестра операций
         """
