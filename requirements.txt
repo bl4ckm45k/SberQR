@@ -3,7 +3,7 @@ aiohttp~=3.8.4
 ujson==5.9.0
 setuptools==69.0.3
 redis>=4.2.0rc1
-SberQR==1.0.3
+SberQR
 certifi>=2023.11.17
 requests~=2.31.0
 urllib3~=2.0.3
