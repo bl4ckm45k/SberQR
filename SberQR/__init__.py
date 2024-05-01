@@ -11,4 +11,4 @@ from .exceptions import (NetworkError, SberQrAPIError)
 
 __author__ = 'bl4ckm45k'
 __version__ = '2.0.2'
-__email__ = 'bl4ckm45k@gmail.com'
+__email__ = 'nonpowa@gmail.com'
