@@ -3,7 +3,6 @@ from http import HTTPStatus
 
 from SberQR.exceptions import SberQrAPIError, NetworkError
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('api')
 
 
