@@ -10,7 +10,7 @@ requirements = ["aiohttp>=3.8.4", "certifi>=2023.11.17", "ujson>=5.9.0", "pytz==
 
 setup(
     name='SberQR',
-    version='2.0.0',
+    version='2.0.1',
     author='bl4ckm45k',
     author_email='nonpowa@gmail.com',
     description='Библиотека для работы с SberPay QR/Плати QR.',
