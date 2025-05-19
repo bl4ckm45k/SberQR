@@ -1,7 +1,7 @@
 qrcode[pil]>=7.4.2
 aiohttp~=3.8.4
 ujson==5.9.0
-setuptools==70.0.0
+setuptools==78.1.1
 redis>=4.2.0rc1
 SberQR
 certifi>=2023.11.17
